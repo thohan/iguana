@@ -33,7 +33,7 @@ export default function FormMakerPage() {
                 relying on a JSON config object.
             </p>
             <p className="max-w-120">
-                Stretch goal: Build a handy tool that'll generate the JSON config object!
+                Stretch goal: Build a handy tool that will generate the JSON config object!
             </p>
             <FormMaker config="" />
         </div>
