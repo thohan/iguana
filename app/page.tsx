@@ -5,7 +5,7 @@ export default function Home() {
     <div className="font-sans grid grid-rows-[20px_1fr_20px] justify-items-center min-h-screen p-8 pb-20 gap-2 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <div className="flex flex-row inline gap-4 mm-4">
-          <span className="inline gap-4 font-medium">Bryan`@apos`s stuff</span>
+          <span className="inline gap-4 font-medium">Bryan&apos;s stuff</span>
           <Image
             className="inline"
             src="/instawhale.jpg"
