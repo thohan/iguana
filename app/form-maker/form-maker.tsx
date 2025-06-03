@@ -1,153 +1,123 @@
-import React from 'react';
+import React from "react"
+import FormField from "./form-field"
+import {
+  FormMetaObject,
+  FormFieldObject,
+  FormConfigObject,
+} from "./form-maker-models"
 
-class FormMetaObject {
-    name: string;
-    description?: string;
-    version?: string;
+let index = 0;
 
-    eagerErrorDisplay?: boolean;    // Aggressiveness of showing error messsages, probably a boolean.
-    // Maybe some top-level style information...
-    submitButtonText?: string;
-
-    constructor(
-        name: string,
-        description: string = "",
-        version: string = "1.0.0",
-        eagerErrorDisplay: boolean = false,
-        submitButtonText: string = "Submit"
-    ) {
-        this.name = name;
-        this.description = description;
-        this.version = version;
-        this.eagerErrorDisplay = eagerErrorDisplay;
-        this.submitButtonText = submitButtonText;
-    }
-}
-
-class FormFieldObject {
-    name: string;
-    id?: string;
-    label?: string;
-    placeholder?: string;
-    type?: string; // e.g., text, number, email, etc.
-    required?: boolean;
-    disabled?: boolean;
-    minLength?: number;
-    maxLength?: number;
-    regex?: string;
-    dataTest?: string;
-
-    constructor(
-        name: string,
-        id?: string,
-        label?: string,
-        placeholder: string = "",
-        type: string = "text",
-        required: boolean = false,
-        disabled: boolean = false,
-        minLength: number = 0,
-        maxLength: number = 255,
-        regex: string = "",
-        dataTest: string = ""
-    ) {
-        this.name = name;
-        this.id = id; // Default to name if id is not provided
-        this.label = label;
-        this.placeholder = placeholder;
-        this.type = type;
-        this.required = required;
-        this.disabled = disabled;
-        this.minLength = minLength;
-        this.maxLength = maxLength;
-        this.regex = regex;
-        this.dataTest = dataTest;
-    }
-}
-
-class FormConfigObject {
-    meta: FormMetaObject;
-    fields: Array<FormFieldObject>;
-    // Maybe some top-level style information
-
-    constructor(meta: FormMetaObject, fields: Array<FormFieldObject>) {
-        this.meta = meta;
-        this.fields = fields;
-    }
-}
-
+// Move to utility file?
 function parseFormConfig(config: string): FormConfigObject {
-    if (config) {
-        try {
-            const parsedConfig = JSON.parse(config);
-            
-            const meta = new FormMetaObject(
-                parsedConfig.meta.name,
-                parsedConfig.meta.description,
-                parsedConfig.meta.version,
-                parsedConfig.meta.eagerErrorDisplay,
-                parsedConfig.meta.submitButtonText
-            );
+  if (config) {
+    try {
+      const parsedConfig = JSON.parse(config)
 
-            const fields = parsedConfig.fields.map((field: FormFieldObject) => {
-                return new FormFieldObject(
-                    field.name,
-                    field.id,
-                    field.label,
-                    field.placeholder,
-                    field.type,
-                    field.required,
-                    field.disabled,
-                    field.minLength,
-                    field.maxLength,
-                    field.regex,
-                    field.dataTest
-                );
-            });
+      const meta = new FormMetaObject(
+        parsedConfig.meta.name,
+        parsedConfig.meta.description,
+        parsedConfig.meta.version,
+        parsedConfig.meta.eagerErrorDisplay,
+        parsedConfig.meta.submitButtonText
+      )
 
-            return new FormConfigObject(meta, fields);
+      const fields = parsedConfig.fields.map((field: FormFieldObject) => {
+        return new FormFieldObject(
+          field.name,
+          field.id,
+          field.label,
+          field.placeholder,
+          field.type,
+          field.required,
+          field.disabled,
+          field.minLength,
+          field.maxLength,
+          field.regex,
+          field.dataTest,
+          field.options ? field.options.map((option: { label?: string; value: string }) => ({
+            label: option.label,
+            value: option.value
+          })) : []
+        )
+      })
 
-        } catch (error) {
-            console.error("Error parsing form config:", error);
-            throw new Error("Invalid form configuration");
-        }
-    } else {
-        return new FormConfigObject(
-            new FormMetaObject("Default Form"),
-            []
-        );
+      return new FormConfigObject(meta, fields)
+    } catch (error) {
+      console.error("Error parsing form config:", error)
+      throw new Error("Invalid form configuration")
     }
+  } else {
+    return new FormConfigObject(new FormMetaObject("Default Form"), [])
+  }
 }
 
-
+// Move to utility file?
+function getDefaultFormConfig(): string {
+  return `{
+    "meta": {
+      "name": "Default Form",
+      "description": "This is a default form configuration.",
+      "version": "1.0.0",
+      "eagerErrorDisplay": false,
+      "submitButtonText": "Submit"
+    },
+    "fields": [
+      {
+        "type": "text",
+        "name": "firstName",
+        "id": "first-name",
+        "label": "First Name",
+        "placeholder": "Enter your first name",
+        "required": true,
+        "disabled": false,
+        "minLength": 2,
+        "maxLength": 50,
+        "regex": "",
+        "dataTest": "first-name-textbox"
+      },
+      {
+        "type": "checkbox",
+        "name": "agreeToTerms",
+        "id": "agree-to-terms",
+        "label": "First Name",
+        "placeholder": "Enter your first name",
+        "disabled": false,
+        "dataTest": "agree-to-terms-checkbox"
+      },
+      {
+        "type": "radio",
+        "name": "gender",
+        "id": "gender",
+        "label": "Gender",
+        "disabled": false,
+        "dataTest": "gender-radio",
+        "options": [{
+          "label": "male", "value": "male"
+        },{
+          "label":"female", "value": "female"
+        },{
+          "label": "prefer not to say", "value": "prefer-not-to-say"
+        }]
+      }
+    ]
+  }`
+}
 
 // Might make more sense to pass in the config info some other way than as a prop.
-export default function FormMaker({
-    config,
-}: {
-    config: string;
-}) {
-    const defaultJsonConfig = `{
-        "meta": {
-            "name": "Default Form",
-            "description": "This is a default form configuration.",
-            "version": "1.0.0",
-            "eagerErrorDisplay": false,
-            "submitButtonText": "Submit"
-        },
-        "fields": []
-    }`;
+export default function FormMaker({ config }: { config: string }) {
+  // Build state objects/form context
 
-    // Build state objects/form context
+  // Our JSON is now an object we can work with.
+  const configObject: FormConfigObject = parseFormConfig(getDefaultFormConfig())
+  
+  const form = (
+    <form>
+      {configObject.fields.map((field) => (
+        <FormField fieldObject={field} index={index++} key={index++}/>
+      ))}
+    </form>
+  )
 
-    // Our JSON is now an object we can work with.
-    const configObject: FormConfigObject = parseFormConfig(defaultJsonConfig);
-    
-
-    const form = (
-        <form>
-            
-        </form>
-    );
-
-    return form;
+  return form
 }
