@@ -3,12 +3,16 @@ import { FormFieldObject } from "./form-maker-models"
 
 export default function FormField({
   fieldObject,
-  index,
+  fieldValue,
+  onChange,
+  isValid,
 }: {
   fieldObject: FormFieldObject
-  index: number
+  fieldValue?: string | number | readonly string[] | undefined,
+  onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void // do validation and whatnot
+  isValid: boolean,
 }) {
-  let field: React.ReactNode
+  let field: React.ReactNode;
 
   switch (fieldObject.type) {
     case "checkbox":
@@ -21,13 +25,14 @@ export default function FormField({
           key={fieldObject.id}
           data-test={fieldObject.dataTest}
           className="form-field"
+          onChange={onChange}
         />
-      )
-      break
+      );
+      break;
     case "radio":
     case "rd":
       field = (
-        <>
+        <div>
           {fieldObject.options?.map((option) => (
             <div key={option.label}>
               <input
@@ -37,14 +42,15 @@ export default function FormField({
                 key={option.label}
                 data-test={`${fieldObject.dataTest}-${option.value}`}
                 className="form-field"
-                value={option.value} // Assuming options have a value property
+                checked={option.checked} // Assuming options have a value property
+                onChange={onChange}
               />
               <label htmlFor={option.label}>{option.label}</label>
             </div>
           ))}
-        </>
-      )
-      break
+        </div>
+      );
+      break;
     case "select":
     case "dropdown":
     case "sel":
@@ -54,11 +60,12 @@ export default function FormField({
           id={fieldObject.id}
           data-test={fieldObject.dataTest}
           className="form-field"
+          onChange={onChange}
         >
           {/* Add options here if available in config */}
         </select>
-      )
-      break
+      );
+      break;
     case "textarea":
     case "txtarea":
       field = (
@@ -68,30 +75,41 @@ export default function FormField({
           data-test={fieldObject.dataTest}
           placeholder={fieldObject.placeholder}
           className="form-field"
+          required={fieldObject.required}
+          disabled={fieldObject.disabled}
+          minLength={fieldObject.minLength}
+          maxLength={fieldObject.maxLength}
+          onChange={onChange}
         />
-      )
-      break
+      );
+      break;
     default:
       field = (
         <input
           type={fieldObject.type || "text"}
+          value={fieldValue}
+          onChange={onChange}
           name={fieldObject.name}
           id={fieldObject.id}
           key={fieldObject.id}
           data-test={fieldObject.dataTest}
           placeholder={fieldObject.placeholder}
-          className="form-field"
+          className={isValid ? "form-field valid" : "form-field invalid"}
+          required={fieldObject.required}
+          disabled={fieldObject.disabled}
+          minLength={fieldObject.minLength}
+          maxLength={fieldObject.maxLength}        
         />
-      )
-      break
+      );
+      break;
   }
 
   return (
     <>
       <label htmlFor={fieldObject.id || fieldObject.name}>
         {fieldObject.label || fieldObject.name}
+        {field}
       </label>
-      {field}
     </>
   )
 }

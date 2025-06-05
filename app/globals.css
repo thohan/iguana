@@ -24,3 +24,9 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.invalid {
+  border-color: red;
+  border-width: 1px;
+  font-weight: bold;
+}
