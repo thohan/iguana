@@ -8,8 +8,8 @@ export default function FormField({
   isValid,
 }: {
   fieldObject: FormFieldObject
-  fieldValue?: any,
-  onChange?: (event: React.ChangeEvent<any>) => void // do validation and whatnot
+  fieldValue?: string | number | readonly string[] | undefined,
+  onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void // do validation and whatnot
   isValid: boolean,
 }) {
   let field: React.ReactNode;

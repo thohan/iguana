@@ -1,13 +1,13 @@
-"use client"
-import React, { useState } from "react"
-import FormField from "./form-field"
-import { FormMetaObject, FormFieldObject, FormConfigObject } from "./form-maker-models"
+"use client";
+import React, { useState } from "react";
+import FormField from "./form-field";
+import { FormMetaObject, FormFieldObject, FormConfigObject } from "./form-maker-models";
 
 // Move to utility file?
 function parseFormConfig(config: string): FormConfigObject {
   if (config) {
     try {
-      const parsedConfig = JSON.parse(config)
+      const parsedConfig = JSON.parse(config);
 
       const meta = new FormMetaObject(
         parsedConfig.meta.name,
@@ -15,7 +15,7 @@ function parseFormConfig(config: string): FormConfigObject {
         parsedConfig.meta.version,
         parsedConfig.meta.eagerErrorDisplay,
         parsedConfig.meta.submitButtonText
-      )
+      );
 
       const fields = parsedConfig.fields.map((field: FormFieldObject) => {
         return new FormFieldObject(
@@ -38,16 +38,16 @@ function parseFormConfig(config: string): FormConfigObject {
                 checked: option.checked || false,
               }))
             : []
-        )
-      })
+        );
+      });
 
-      return new FormConfigObject(meta, fields)
+      return new FormConfigObject(meta, fields);
     } catch (error) {
-      console.error("Error parsing form config:", error)
-      throw new Error("Invalid form configuration")
+      console.error("Error parsing form config:", error);
+      throw new Error("Invalid form configuration");
     }
   } else {
-    return new FormConfigObject(new FormMetaObject("Default Form"), [])
+    return new FormConfigObject(new FormMetaObject("Default Form"), []);
   }
 }
 
@@ -100,54 +100,64 @@ function getDefaultFormConfig(): string {
         }]
       }
     ]
-  }`
+  }`;
 }
 
 // Might make more sense to pass in the config info some other way than as a prop.
 export default function FormMaker({ config }: { config: string }) {
-  const [isValid, setIsValid] = useState(true)
+  const [isValid, setIsValid] = useState(true);
 
   function onValueChanged(
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) {
     if (event.target.checkValidity()) {
-      setIsValid(true)
+      setIsValid(true);
     } else {
-      console.log("Invalid input:", event.target.validationMessage)
-      setIsValid(false)
+      console.log("Invalid input:", event.target.validationMessage);
+      setIsValid(false);
     }
 
-    updateFormState(event.target.name, event.target.value)
+    updateFormState(event.target.name, event.target.value);
   }
 
   function updateFormState(name: string, value: string) {
-    setFormState((prevState: any[]) => {
-      const updatedState = prevState.map((field) => {
-        if (field.fieldName === name) {
-          return { ...field, fieldValue: value }
-        }
-        return field
-      })
-      return updatedState
-    })
+    setFormState(
+      (prevState: { fieldName: string; fieldValue: string | number | readonly string[] | undefined }[]) => {
+        const updatedState = prevState.map((field) => {
+          if (field.fieldName === name) {
+            return { ...field, fieldValue: value };
+          }
+          return field;
+        });
+        return updatedState;
+      }
+    );
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+    event.preventDefault();
     // Handle form submission logic here
-    console.log("Form submitted with state:", formState)
+    console.log("Form submitted with state:", formState);
   }
 
   // Our JSON is now an object we can work with.
-  const configObject: FormConfigObject = parseFormConfig(getDefaultFormConfig())
-  let formFieldNames: any[] = []
+  const configObject: FormConfigObject = parseFormConfig(getDefaultFormConfig());
+  const formFieldNames: {
+    fieldName: string;
+    fieldValue: string | number | readonly string[] | undefined;
+  }[] = [];
 
   // Build state objects/form context
   configObject.fields.map((field) => {
-    formFieldNames.push({ fieldName: field.name, fieldValue: field.value || "" })
-  })
+    formFieldNames.push({ fieldName: field.name, fieldValue: field.value || "" });
+  });
 
-  const [formState, setFormState] = useState<any[]>(formFieldNames)
+  const [formState, setFormState] = useState<
+    {
+      fieldName: string;
+      fieldValue: string | number | readonly string[] | undefined;
+    }[]
+  >(formFieldNames);
 
   const form = (
     <form method="post" onSubmit={handleSubmit}>
@@ -162,7 +172,7 @@ export default function FormMaker({ config }: { config: string }) {
       ))}
       <button type="submit">Submit form</button>
     </form>
-  )
+  );
 
-  return form
+  return form;
 }
