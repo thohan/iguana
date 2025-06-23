@@ -1,6 +1,11 @@
 import React from "react";
 import { FormFieldObject } from "./form-maker-models";
 
+// TODO: Move markup to external file for react, that can be swapped out for,
+// say, react that implements radix-ui, or angular, or vue, or whatever.
+// This is completely customizable. Use your own markup and/or tweak this as needed.
+// ALSO TODO: Implement behaviors for "eagerErrorDisplay" flag or switch that will determine
+// how in-your-face we want to be with error messages and validation.
 export default function FormField({
   fieldObject,
   fieldValue,
@@ -17,6 +22,13 @@ export default function FormField({
   let field: React.ReactNode;
 
   switch (fieldObject.type) {
+    case "header":
+      field = (
+        <h2 className="form-header" key={fieldObject.id}>
+          {fieldObject.label || fieldObject.name}
+        </h2>
+      );
+      break;
     case "checkbox":
     case "cb":
       field = (
@@ -25,10 +37,10 @@ export default function FormField({
           checked={fieldChecked}
           onChange={onChange}
           name={fieldObject.name}
-          id={fieldObject.id}
+          id={fieldObject.id || fieldObject.name}
           key={fieldObject.id}
           data-test={fieldObject.dataTest}
-          className="form-field"
+          className="form-field checkbox"
         />
       );
       break;
@@ -41,14 +53,17 @@ export default function FormField({
               <input
                 type="radio"
                 name={fieldObject.name}
-                id={option.label}
-                key={option.label}
-                data-test={`${fieldObject.dataTest}-${option.value}`}
+                id={`${fieldObject.id}-${option.value}`}
+                //key={option.label}
+                data-test={
+                  fieldObject.dataTest ? `${fieldObject.dataTest}-${option.value}` : null
+                }
                 className="form-field"
-                checked={option.checked} // Assuming options have a value property
+                value={option.value}
+                checked={fieldValue === option.value}
                 onChange={onChange}
               />
-              <label htmlFor={option.label}>{option.label}</label>
+              <label htmlFor={`${fieldObject.id}-${option.id}`}>{option.label}</label>
             </div>
           ))}
         </div>
@@ -60,7 +75,7 @@ export default function FormField({
       field = (
         <select
           name={fieldObject.name}
-          id={fieldObject.id}
+          id={fieldObject.id || fieldObject.name}
           data-test={fieldObject.dataTest}
           className="form-field"
           onChange={onChange}
@@ -74,12 +89,12 @@ export default function FormField({
       field = (
         <textarea
           name={fieldObject.name}
-          id={fieldObject.id}
+          id={fieldObject.id || fieldObject.name}
           data-test={fieldObject.dataTest}
           placeholder={fieldObject.placeholder}
           className="form-field"
-          required={fieldObject.required}
-          disabled={fieldObject.disabled}
+          required={fieldObject.required || true}
+          disabled={fieldObject.disabled || false}
           minLength={fieldObject.minLength}
           maxLength={fieldObject.maxLength}
           onChange={onChange}
@@ -93,26 +108,33 @@ export default function FormField({
           value={fieldValue}
           onChange={onChange}
           name={fieldObject.name}
-          id={fieldObject.id}
+          id={fieldObject.id || fieldObject.name}
           key={fieldObject.id}
           data-test={fieldObject.dataTest}
           placeholder={fieldObject.placeholder}
           className={isValid ? "form-field valid" : "form-field invalid"}
-          required={fieldObject.required}
-          disabled={fieldObject.disabled}
+          required={fieldObject.required || true}
+          disabled={fieldObject.disabled || false}
           minLength={fieldObject.minLength}
           maxLength={fieldObject.maxLength}
         />
       );
       break;
   }
-
+  // Wrap each field in a label that needs a label, rather than below?
   return (
-    <div>
-      <label htmlFor={fieldObject.id || fieldObject.name}>
-        {fieldObject.label || fieldObject.name}
-      </label>
-      {field}
+    <div className="form-field-wrapper">
+      {fieldObject.type !== "header" ? (
+        <>
+          
+          <label htmlFor={fieldObject.id || fieldObject.name}>
+            {fieldObject.label || fieldObject.name}
+          </label>
+          {field}
+        </>
+      ) : (
+        field
+      )}
     </div>
   );
 }

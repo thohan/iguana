@@ -27,15 +27,15 @@ export class FormFieldObject {
   id?: string
   label?: string
   placeholder?: string
-  type?: string // e.g., text, number, email, etc.
-  value: string;
+  type: string // e.g., text, number, email, etc.
+  value: string
   required?: boolean
   disabled?: boolean
   minLength?: number
   maxLength?: number
   regex?: string
   dataTest?: string
-  options?: Array<{ label?: string; value: string; checked: boolean; }> // For select or radio fields
+  options?: Array<{ label?: string; value: string; id: string; checked: boolean; }> // For select or radio fields
 
   constructor(
     name: string,
@@ -50,7 +50,7 @@ export class FormFieldObject {
     maxLength: number = 255,
     regex: string = "",
     dataTest: string = "",
-    options?: Array<{ value: string; label?: string; checked: boolean; }>  // Used by select and radio
+    options?: Array<{ value: string; label?: string; id: string; checked: boolean; }>  // Used by select and radio
   ) {
     this.name = name;
     this.id = id; // Default to name if id is not provided
