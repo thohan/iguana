@@ -1,16 +1,18 @@
-import React from "react"
-import { FormFieldObject } from "./form-maker-models"
+import React from "react";
+import { FormFieldObject } from "./form-maker-models";
 
 export default function FormField({
   fieldObject,
   fieldValue,
+  fieldChecked,
   onChange,
   isValid,
 }: {
-  fieldObject: FormFieldObject
-  fieldValue?: string | number | readonly string[] | undefined,
-  onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void // do validation and whatnot
-  isValid: boolean,
+  fieldObject: FormFieldObject;
+  fieldValue?: string | number | readonly string[] | undefined;
+  fieldChecked?: boolean; // For checkbox and radio fields
+  onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void; // do validation and whatnot
+  isValid: boolean;
 }) {
   let field: React.ReactNode;
 
@@ -20,12 +22,13 @@ export default function FormField({
       field = (
         <input
           type="checkbox"
+          checked={fieldChecked}
+          onChange={onChange}
           name={fieldObject.name}
           id={fieldObject.id}
           key={fieldObject.id}
           data-test={fieldObject.dataTest}
           className="form-field"
-          onChange={onChange}
         />
       );
       break;
@@ -98,18 +101,18 @@ export default function FormField({
           required={fieldObject.required}
           disabled={fieldObject.disabled}
           minLength={fieldObject.minLength}
-          maxLength={fieldObject.maxLength}        
+          maxLength={fieldObject.maxLength}
         />
       );
       break;
   }
 
   return (
-    <>
+    <div>
       <label htmlFor={fieldObject.id || fieldObject.name}>
         {fieldObject.label || fieldObject.name}
-        {field}
       </label>
-    </>
-  )
+      {field}
+    </div>
+  );
 }
