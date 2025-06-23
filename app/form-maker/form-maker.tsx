@@ -117,14 +117,28 @@ export default function FormMaker({ config }: { config: string }) {
       setIsValid(false);
     }
 
-    updateFormState(event.target.name, event.target.value);
+    updateFormState(event.target.name, event.target.type, event.target.value, (event.target as HTMLInputElement).checked);
   }
 
-  function updateFormState(name: string, value: string) {
+  function updateFormState(
+    name: string,
+    type: string,
+    value?: string | number | readonly string[] | undefined,
+    checked?: boolean,
+  ) {
     setFormState(
-      (prevState: { fieldName: string; fieldValue: string | number | readonly string[] | undefined }[]) => {
+      (
+        prevState: {
+          fieldName: string;
+          fieldValue: string | number | readonly string[] | undefined;
+          fieldChecked?: boolean;
+        }[]
+      ) => {
         const updatedState = prevState.map((field) => {
           if (field.fieldName === name) {
+            if (type === "checkbox" || type === "radio") {
+              return { ...field, fieldChecked: checked || false };
+            }
             return { ...field, fieldValue: value };
           }
           return field;
@@ -145,17 +159,23 @@ export default function FormMaker({ config }: { config: string }) {
   const formFieldNames: {
     fieldName: string;
     fieldValue: string | number | readonly string[] | undefined;
+    fieldChecked?: boolean; // For checkbox and radio fields
   }[] = [];
 
   // Build state objects/form context
   configObject.fields.map((field) => {
-    formFieldNames.push({ fieldName: field.name, fieldValue: field.value || "" });
+    formFieldNames.push({
+      fieldName: field.name,
+      fieldValue: field.value || "",
+      fieldChecked: field.value === "on" || false,
+    });
   });
 
   const [formState, setFormState] = useState<
     {
       fieldName: string;
       fieldValue: string | number | readonly string[] | undefined;
+      fieldChecked?: boolean; // For checkbox and radio fields
     }[]
   >(formFieldNames);
 
@@ -166,6 +186,7 @@ export default function FormMaker({ config }: { config: string }) {
           fieldObject={field}
           key={field.id}
           fieldValue={(formState.find((x) => x.fieldName === field.name) || {}).fieldValue}
+          fieldChecked={(formState.find((x) => x.fieldName === field.name) || {}).fieldChecked}
           onChange={onValueChanged}
           isValid={isValid}
         />

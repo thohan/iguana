@@ -2,12 +2,12 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] justify-items-center min-h-screen p-8 pb-20 gap-2 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <div className="flex flex-row inline gap-4 mm-4">
-          <span className="inline gap-4 font-medium">Bryan&apos;s stuff</span>
+    <div className="home-container">
+      <main className="home-main">
+        <div className="home-header">
+          <span className="home-title">Bryan&apos;s stuff</span>
           <Image
-            className="inline"
+            className="home-logo"
             src="/instawhale.jpg"
             alt="Next.js logo"
             width={180}
@@ -15,22 +15,21 @@ export default function Home() {
             priority
           />
         </div>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid bordfer-transparent transition-colors flex items-center justify-center bg-[#000] text-white gap-2 hover:bg-[#111] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="/form-maker">
-              Form-maker
-            </a>
+        <div className="home-section">
+          <a className="home-btn home-btn-dark" href="/form-maker">
+            Form-maker
+          </a>
         </div>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
+        <div className="home-section">
           <a
-            className="rounded-full border border-solid border-tdransparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+            className="home-btn home-btn-light"
             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
             target="_blank"
             rel="noopener noreferrer"
           >
             <Image
-              className="dark:invert"
+              className="home-vercel-logo"
+              style={{ filter: "invert(1)" }}
               src="/vercel.svg"
               alt="Vercel logomark"
               width={20}
@@ -39,7 +38,7 @@ export default function Home() {
             Deploy now
           </a>
           <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
+            className="home-btn home-btn-outline"
             href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
             target="_blank"
             rel="noopener noreferrer"
@@ -48,9 +47,9 @@ export default function Home() {
           </a>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
+      <footer className="home-footer">
         <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          className="home-footer-link"
           href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
           target="_blank"
           rel="noopener noreferrer"
