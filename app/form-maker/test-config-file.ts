@@ -1,5 +1,5 @@
 export class testConfigFile {
-    static config = `{
+  static config = `{
     "meta": {
       "name": "Example Form",
       "description": "This an example form.",
@@ -18,7 +18,17 @@ export class testConfigFile {
         "label": "First Name",
         "placeholder": "Enter your first name",
         "minLength": 2,
-        "maxLength": 20
+        "maxLength": 20,
+        "width": "half"
+      },
+      {
+        "type": "text",
+        "name": "LastName",
+        "label": "Last Name",
+        "placeholder": "Enter your last name",
+        "minLength": 2,
+        "maxLength": 20,
+        "width": "half"
       },
       {
         "type": "checkbox",
@@ -30,13 +40,15 @@ export class testConfigFile {
         "name": "gender",
         "id": "gender",
         "label": "Gender",
-        "options": [{
-          "label": "male", "value": "male", "id": "male"
-        },{
-          "label":"female", "value": "female", "id": "female"
-        },{
-          "label": "prefer not to say", "value": "prefer-not-to-say", "id": "prefer-not-to-say"
-        }]
+        "options": [
+          {
+            "label": "male", "value": "male", "id": "male", "dataTest": "custom-data-test-attribute"
+          },{
+            "label":"female", "value": "female", "id": "female"
+          },{
+            "label": "prefer not to say", "value": "prefer-not-to-say", "id": "prefer-not-to-say"
+          }
+        ]
       }
     ]
   }`;

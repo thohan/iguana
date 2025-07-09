@@ -34,8 +34,9 @@ export class FormFieldObject {
   minLength?: number
   maxLength?: number
   regex?: string
-  dataTest?: string
-  options?: Array<{ label?: string; value: string; id: string; checked: boolean; }> // For select or radio fields
+  dataTest?: string // TODO: We may want to just generate this from the name/id rather than have it as a separate field.
+  className?: string
+  options?: Array<{ label?: string; value: string; id: string; checked: boolean; dataTest?: string; }> // For select or radio fields
 
   constructor(
     name: string,
@@ -50,7 +51,8 @@ export class FormFieldObject {
     maxLength: number = 255,
     regex: string = "",
     dataTest: string = "",
-    options?: Array<{ value: string; label?: string; id: string; checked: boolean; }>  // Used by select and radio
+    className: string = "",
+    options?: Array<{ value: string; label?: string; id: string; checked: boolean; dataTest?: string; }>  // Used by select and radio
   ) {
     this.name = name;
     this.id = id; // Default to name if id is not provided
@@ -64,6 +66,7 @@ export class FormFieldObject {
     this.maxLength = maxLength;
     this.regex = regex;
     this.dataTest = dataTest;
+    this.className = className;
     this.options = options || [];
   }
 }
