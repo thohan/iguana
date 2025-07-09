@@ -32,12 +32,14 @@ function parseFormConfig(config: string): FormConfigObject {
           field.maxLength,
           field.regex,
           field.dataTest,
+          field.className,
           field.options
-            ? field.options.map((option: { label?: string; value: string; id: string; checked: boolean; }) => ({
+            ? field.options.map((option: { label?: string; value: string; id: string; checked: boolean; dataTest?: string; }) => ({
               label: option.label,
               value: option.value,
               id: option.id,
               checked: option.checked || false,
+              dataTest: option.dataTest || `${field.name}-${option.id}`
             }))
             : []
         );
