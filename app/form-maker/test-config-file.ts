@@ -9,8 +9,7 @@ export class testConfigFile {
       {
         "type": "header",
         "name": "formHeader",
-        "label": "A JSON-Borne form (sorry)",
-        "id": "formHeader"
+        "label": "A JSON-Borne form (sorry)"
       },
       {
         "type": "text",
@@ -23,7 +22,7 @@ export class testConfigFile {
       },
       {
         "type": "text",
-        "name": "LastName",
+        "name": "lastName",
         "label": "Last Name",
         "placeholder": "Enter your last name",
         "minLength": 2,
@@ -38,7 +37,6 @@ export class testConfigFile {
       {
         "type": "radio",
         "name": "gender",
-        "id": "gender",
         "label": "Gender",
         "options": [
           {

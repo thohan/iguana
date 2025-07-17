@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import FormField from "./form-field";
 import { testConfigFile } from "./test-config-file";
-import { FormMetaObject, FormFieldObject, FormConfigObject } from "./form-maker-models";
+import { FormMetaObject, FormFieldObject, FormConfigObject, } from "./form-maker-models";
 
 // Move to utility file?
 function parseFormConfig(config: string): FormConfigObject {
@@ -70,24 +70,22 @@ export default function FormMaker({
   setFormOutputAction
 }: FormMakerProps
 ) {
-  const [isValid, setIsValid] = useState(true);
-
   function onValueChanged(
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | any>
   ) {
-    if (event.target.checkValidity()) {
-      setIsValid(true);
-    } else {
-      console.log("Invalid input:", event.target.validationMessage);
-      setIsValid(false);
-    }
-
-    updateFormState(event.target.name, event.target.type, event.target.value, event.target.checked);
+    updateFormState(
+      event.target.name,
+      event.target.type,
+      event.target.checkValidity(),
+      event.target.value,
+      event.target.checked
+    );
   }
 
   function updateFormState(
     name: string,
     type: string,
+    isValid: boolean,
     value?: string | number | readonly string[] | undefined,
     checked?: boolean,
   ) {
@@ -96,6 +94,7 @@ export default function FormMaker({
         prevState: {
           fieldName: string;
           fieldType: string;
+          isValid: boolean;
           fieldValue: string | number | readonly string[] | undefined;
           fieldChecked?: boolean;
         }[]
@@ -103,14 +102,14 @@ export default function FormMaker({
         const updatedState = prevState.map((field) => {
           if (field.fieldName === name) {
             if (type === "checkbox") {
-              return { ...field, fieldChecked: checked || false };
+              return { ...field, fieldChecked: checked || false, isValid };
             }
 
             if (type === "radio") {
-              return { ...field, fieldValue: value, fieldChecked: checked || false };
+              return { ...field, fieldValue: value, fieldChecked: checked || false, isValid };
             }
 
-            return { ...field, fieldValue: value };
+            return { ...field, fieldValue: value, isValid };
           }
           return field;
         });
@@ -128,11 +127,14 @@ export default function FormMaker({
 
   // Our JSON is now an object we can work with.
   const configObject: FormConfigObject = parseFormConfig(getDefaultFormConfig());
+  
+  // TODO: Use a class for these state objects.
   const formFieldNames: {
     fieldName: string;
     fieldType: string;
     fieldValue: string | number | readonly string[] | undefined;
     fieldChecked?: boolean; // For checkbox and radio fields
+    isValid: boolean;
   }[] = [];
 
   // Build state objects/form context
@@ -141,6 +143,7 @@ export default function FormMaker({
       formFieldNames.push({
         fieldName: field.name,
         fieldType: field.type,
+        isValid: true,
         fieldValue: field.value || "",
         fieldChecked: field.value === "on" || false,
       });
@@ -151,10 +154,17 @@ export default function FormMaker({
     {
       fieldName: string;
       fieldType: string;
+      isValid: boolean;
       fieldValue: string | number | readonly string[] | undefined;
       fieldChecked?: boolean; // For checkbox and radio fields
     }[]
   >(formFieldNames);
+
+  const fieldStateMap = React.useMemo(() => {
+    const map: Record<string, typeof formState[0]> = {};
+    formState.forEach(f => { map[f.fieldName] = f; });
+    return map;
+  }, [formState]);
 
   const form = (
     <div className="form-wrapper">
@@ -162,11 +172,11 @@ export default function FormMaker({
         {configObject.fields.map((field) => (
           <FormField
             fieldObject={field}
-            key={field.id}
-            fieldValue={(formState.find((x) => x.fieldName === field.name) || {}).fieldValue}
-            fieldChecked={(formState.find((x) => x.fieldName === field.name) || {}).fieldChecked}
+            key={field.name || field.id}
+            fieldValue={fieldStateMap[field.name]?.fieldValue}
+            isValid={field.type === "header" || fieldStateMap[field.name]?.isValid}
+            fieldChecked={fieldStateMap[field.name]?.fieldChecked}
             onChange={onValueChanged}
-            isValid={isValid}
           />
         ))}
         <button type="submit">Submit form</button>
