@@ -81,3 +81,11 @@ export class FormConfigObject {
     this.fields = fields;
   }
 }
+
+export interface FormFieldProps {
+  fieldObject: FormFieldObject;
+  fieldValue?: string | number | readonly string[] | undefined;
+  isValid: boolean;
+  fieldChecked?: boolean; // For checkbox and radio fields
+  onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void; // do validation and whatnot
+}
